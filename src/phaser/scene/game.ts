@@ -1,9 +1,11 @@
 import Phaser from "phaser"
+import {Card} from "@phaser/views/card.js";
 
 
-export class Game extends Phaser.Scene{
+export class Game extends Phaser.Scene {
   private cardScale = .4
   private cardOffset = 20
+  private cards = []
 
   constructor() {
     super({key: 'Game'})
@@ -16,16 +18,24 @@ export class Game extends Phaser.Scene{
   }
 
   create() {
-    const w = this.scale.width
-    const h = this.scale.height
-    const positions = this.getPositions();
-
-    this.add.image(w/2, h/2 , 'background').setDisplaySize(w,h)
-    for(let position of positions) {
-      this.add.sprite(position.x, position.y , 'card').setScale(this.cardScale)
-    }
+    this.createBackground()
+    this.createCards()
   }
 
+  createBackground() {
+    const w = this.scale.width
+    const h = this.scale.height
+
+    this.add.image(w / 2, h / 2, 'background').setDisplaySize(w, h)
+  }
+
+  createCards() {
+    const positions = this.getPositions();
+
+    for (let position of positions) {
+      this.cards.push(new Card(this, position, this.cardScale))
+    }
+  }
 
   getPositions() {
     const positions = []
@@ -39,8 +49,8 @@ export class Game extends Phaser.Scene{
     const offsetX = (this.scale.width - w * rows + w) / 2
     const offsetY = (this.scale.height - h * cols + h) / 2
 
-    for(let i=0; i<rows; i++) {
-      for(let j=0; j<cols; j++) {
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
         positions.push({
           x: i * w + offsetX,
           y: j * h + offsetY

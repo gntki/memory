@@ -3,7 +3,6 @@ import {baseConfig} from "@phaser/data/data.ts";
 import {Game} from "@phaser/scene/game.ts";
 
 
-
 export function initGame(options) {
   const {parent, fullScreen = true, width, height} = options;
 
