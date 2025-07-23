@@ -27,6 +27,7 @@
     "paths": {
       "@pages/*": ["./pages/*"],
       "@components/*": ["./components/*"],
+      "@phaser/*": ["./phaser/*"],
       "@ui/*": ["./ui-kit/*"],
       "@constants/*": ["./constants/*"],
       "@images/*": ["./assets/images/*"]

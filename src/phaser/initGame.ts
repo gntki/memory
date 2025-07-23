@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
+import {baseConfig} from "@phaser/data/data.ts";
+import {Game} from "@phaser/scene/game.ts";
 
-import {baseConfig} from "phaser/data/data.ts";
 
 
 export function initGame(options) {
@@ -9,6 +10,7 @@ export function initGame(options) {
   const config = {
     ...baseConfig,
     parent: parent,
+    scene: Game,
     scale: {
       parent,
       width: width,
