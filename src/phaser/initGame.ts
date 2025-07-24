@@ -14,7 +14,7 @@ export function initGame(options) {
       parent,
       width: width,
       height: height,
-    }
+    },
   }
   const game = new Phaser.Game(config);
 

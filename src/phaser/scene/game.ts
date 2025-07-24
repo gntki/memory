@@ -3,8 +3,9 @@ import {Card} from "@phaser/views/card.js";
 
 
 export class Game extends Phaser.Scene {
-  private cardScale = .4
+  private cardScale = .5
   private cardOffset = 20
+  private cardIds: number[] = [1,2,3,4,5]
   private cards = []
 
   constructor() {
@@ -13,8 +14,12 @@ export class Game extends Phaser.Scene {
 
   preload() {
     this.load.image('background', 'images/background.jpg')
-    this.load.image('card', 'images/card.jpg')
-    console.log(this)
+    this.load.image('card-back', 'images/back.png')
+    this.load.image('card-1', 'images/front-1.png')
+    this.load.image('card-2', 'images/front-2.png')
+    this.load.image('card-3', 'images/front-3.png')
+    this.load.image('card-4', 'images/front-4.png')
+    this.load.image('card-5', 'images/front-5.png')
   }
 
   create() {
@@ -31,9 +36,12 @@ export class Game extends Phaser.Scene {
 
   createCards() {
     const positions = this.getPositions();
+    Phaser.Utils.Array.Shuffle(positions);
 
-    for (let position of positions) {
-      this.cards.push(new Card(this, position, this.cardScale))
+    for (let cardId of this.cardIds) {
+      for(let i=0; i<2; i++) {
+        this.cards.push(new Card(this, positions.pop(), this.cardScale, cardId));
+      }
     }
   }
 
@@ -43,7 +51,7 @@ export class Game extends Phaser.Scene {
     const rows = 5
     const cols = 2
 
-    const cardTexture = this.textures.get('card').getSourceImage()
+    const cardTexture = this.textures.get('card-1').getSourceImage()
     const w = cardTexture.width * this.cardScale + this.cardOffset
     const h = cardTexture.height * this.cardScale + this.cardOffset
     const offsetX = (this.scale.width - w * rows + w) / 2
