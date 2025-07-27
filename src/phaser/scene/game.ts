@@ -3,10 +3,11 @@ import {Card} from "@phaser/views/card.js";
 
 
 export class Game extends Phaser.Scene {
-  private cardScale = .5
+  private cardScale = .55
   private cardOffset = 20
   private cardIds: number[] = [1,2,3,4,5]
   private cards = []
+  private openedCard  = null
 
   constructor() {
     super({key: 'Game'})
@@ -43,6 +44,24 @@ export class Game extends Phaser.Scene {
         this.cards.push(new Card(this, positions.pop(), this.cardScale, cardId));
       }
     }
+
+    this.input.on('gameobjectdown', this.onCardClick, this)
+  }
+
+  onCardClick(pointer, card) {
+    if(card.opened) return;
+
+    if(this.openedCard) {
+      if(this.openedCard.cardId === card.cardId) {
+        this.openedCard = null;
+      } else {
+        this.openedCard.closeCard();
+        this.openedCard = card
+      }
+    } else {
+      this.openedCard = card
+    }
+    card.openCard()
   }
 
   getPositions() {

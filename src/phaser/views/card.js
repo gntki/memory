@@ -1,7 +1,22 @@
 export class Card extends Phaser.GameObjects.Sprite {
   constructor(scene, position, cardScale, cardId) {
-    super(scene, position.x, position.y, `card-${cardId}`);
+    super(scene, position.x, position.y, `card-back`);
     this.setScale(cardScale);
+    this.cardId = cardId;
+    this.opened = false;
     scene.add.existing(this);
+    this.setInteractive();
   }
+
+  openCard() {
+    this.opened = true;
+    this.setTexture(`card-${this.cardId}`);
+  }
+
+  closeCard() {
+    this.opened = false;
+    this.setTexture(`card-back`);
+  }
+
 }
+
