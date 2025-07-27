@@ -3,49 +3,66 @@ import {Card} from "@phaser/views/card.js";
 
 
 export class Game extends Phaser.Scene {
-  private cardScale = .55
-  private cardOffset = 20
-  private cardIds: number[] = [1,2,3,4,5]
-  private cards = []
-  private openedCard  = null
+  private cardScale = .55;
+  private cardOffset = 20;
+  private cardIds: number[] = [1,2,3,4,5];
+  private cards = [];
+  private openedCard  = null;
+  private openedPairCount = 0;
 
   constructor() {
-    super({key: 'Game'})
+    super({key: 'Game'});
   }
 
   preload() {
-    this.load.image('background', 'images/background.jpg')
-    this.load.image('card-back', 'images/back.png')
-    this.load.image('card-1', 'images/front-1.png')
-    this.load.image('card-2', 'images/front-2.png')
-    this.load.image('card-3', 'images/front-3.png')
-    this.load.image('card-4', 'images/front-4.png')
-    this.load.image('card-5', 'images/front-5.png')
+    this.load.image('background', 'images/background.jpg');
+    this.load.image('card-back', 'images/back.png');
+    this.load.image('card-1', 'images/front-1.png');
+    this.load.image('card-2', 'images/front-2.png');
+    this.load.image('card-3', 'images/front-3.png');
+    this.load.image('card-4', 'images/front-4.png');
+    this.load.image('card-5', 'images/front-5.png');
   }
 
   create() {
-    this.createBackground()
-    this.createCards()
+    this.createBackground();
+    this.createCards();
+
+    this.startGame();
   }
 
-  createBackground() {
-    const w = this.scale.width
-    const h = this.scale.height
-
-    this.add.image(w / 2, h / 2, 'background').setDisplaySize(w, h)
+  startGame() {
+    this.openedCard = null;
+    this.openedPairCount = 0;
+    this.initCards();
   }
 
-  createCards() {
+  initCards() {
     const positions = this.getPositions();
     Phaser.Utils.Array.Shuffle(positions);
 
-    for (let cardId of this.cardIds) {
+    this.cards.forEach((card)=> {
+      const position = positions.pop();
+      card.closeCard();
+      card.setPosition(position.x,position.y);
+    })
+  }
+
+  createBackground() {
+    const w = this.scale.width;
+    const h = this.scale.height;
+
+    this.add.image(w / 2, h / 2, 'background').setDisplaySize(w, h);
+  }
+
+  createCards() {
+     for (let cardId of this.cardIds) {
       for(let i=0; i<2; i++) {
-        this.cards.push(new Card(this, positions.pop(), this.cardScale, cardId));
+        this.cards.push(new Card(this, this.cardScale, cardId));
       }
     }
 
-    this.input.on('gameobjectdown', this.onCardClick, this)
+    this.input.on('gameobjectdown', this.onCardClick, this);
   }
 
   onCardClick(pointer, card) {
@@ -54,27 +71,32 @@ export class Game extends Phaser.Scene {
     if(this.openedCard) {
       if(this.openedCard.cardId === card.cardId) {
         this.openedCard = null;
+        ++this.openedPairCount;
       } else {
         this.openedCard.closeCard();
-        this.openedCard = card
+        this.openedCard = card;
       }
     } else {
-      this.openedCard = card
+      this.openedCard = card;
     }
-    card.openCard()
+    card.openCard();
+
+    if(this.openedPairCount === this.cards.length/2) {
+      this.startGame();
+    }
   }
 
   getPositions() {
-    const positions = []
+    const positions = [];
 
-    const rows = 5
-    const cols = 2
+    const rows = 5;
+    const cols = 2;
 
-    const cardTexture = this.textures.get('card-1').getSourceImage()
-    const w = cardTexture.width * this.cardScale + this.cardOffset
-    const h = cardTexture.height * this.cardScale + this.cardOffset
-    const offsetX = (this.scale.width - w * rows + w) / 2
-    const offsetY = (this.scale.height - h * cols + h) / 2
+    const cardTexture = this.textures.get('card-1').getSourceImage();
+    const w = cardTexture.width * this.cardScale + this.cardOffset;
+    const h = cardTexture.height * this.cardScale + this.cardOffset;
+    const offsetX = (this.scale.width - w * rows + w) / 2;
+    const offsetY = (this.scale.height - h * cols + h) / 2;
 
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
@@ -85,7 +107,7 @@ export class Game extends Phaser.Scene {
       }
     }
 
-    return positions
+    return positions;
   }
 
 
