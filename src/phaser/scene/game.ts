@@ -1,8 +1,10 @@
 import Phaser from "phaser"
 import {Card} from "@phaser/views/card.js";
+import type {PositionType} from "@phaser/scene/types.ts";
 
 
 export class Game extends Phaser.Scene {
+  private cardsMap = {rows: 5, cols: 2};
   private cardScale = .55;
   private cardOffset = 20;
   private cardIds: number[] = [1,2,3,4,5];
@@ -42,7 +44,8 @@ export class Game extends Phaser.Scene {
     Phaser.Utils.Array.Shuffle(positions);
 
     this.cards.forEach((card)=> {
-      const position = positions.pop();
+      const position: PositionType = positions.pop()!;
+      if(!positions) return;
       card.closeCard();
       card.setPosition(position.x,position.y);
     })
@@ -57,7 +60,7 @@ export class Game extends Phaser.Scene {
 
   createCards() {
      for (let cardId of this.cardIds) {
-      for(let i=0; i<2; i++) {
+      for(let i=0; i<this.cardsMap.cols; i++) {
         this.cards.push(new Card(this, this.cardScale, cardId));
       }
     }
@@ -89,8 +92,7 @@ export class Game extends Phaser.Scene {
   getPositions() {
     const positions = [];
 
-    const rows = 5;
-    const cols = 2;
+    const {rows, cols} = this.cardsMap;
 
     const cardTexture = this.textures.get('card-1').getSourceImage();
     const w = cardTexture.width * this.cardScale + this.cardOffset;

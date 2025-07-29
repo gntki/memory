@@ -1,21 +1,48 @@
 export class Card extends Phaser.GameObjects.Sprite {
+
   constructor(scene, cardScale, cardId) {
     super(scene, 0, 0, `card-back`);
-    this.setScale(cardScale);
+    this.scene = scene;
     this.cardId = cardId;
-    this.opened = false;
+    this.cardScale = cardScale;
+    this.setScale(cardScale);
+
     scene.add.existing(this);
     this.setInteractive();
+    this.opened = false;
+
+    console.log('this.cardScale', this.cardScale)
+  }
+
+  flip(texture) {
+    this.scene.tweens.add({
+      targets: this,
+      scaleX: 0,
+      ease: "linear",
+      duration: 150,
+      onComplete: ()=> this.show(texture)
+    })
+  }
+
+  show(texture) {
+    this.setTexture(texture);
+    this.scene.tweens.add({
+      targets: this,
+      scaleX: this.cardScale,
+      ease: "linear",
+      duration: 150,
+    })
   }
 
   openCard() {
     this.opened = true;
-    this.setTexture(`card-${this.cardId}`);
+    this.flip(`card-${this.cardId}`)
   }
 
   closeCard() {
+    if(!this.opened) return;
     this.opened = false;
-    this.setTexture(`card-back`);
+    this.flip(`card-back`)
   }
 
 }
