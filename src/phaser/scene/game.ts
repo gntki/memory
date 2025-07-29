@@ -5,7 +5,7 @@ import type {PositionType} from "@phaser/scene/types.ts";
 
 export class Game extends Phaser.Scene {
   private cardsMap = {rows: 5, cols: 2};
-  private cardScale = .55;
+  private cardScale = .45;
   private cardOffset = 20;
   private cardIds: number[] = [1,2,3,4,5];
   private cards = [];
@@ -18,6 +18,9 @@ export class Game extends Phaser.Scene {
 
   preload() {
     this.load.image('background', 'images/background.jpg');
+
+    this.load.font('CustomFont', 'fonts/MasqueradeToyStoreStuff-Regular.woff2');
+
     this.load.image('card-back', 'images/back.png');
     this.load.image('card-1', 'images/front-1.png');
     this.load.image('card-2', 'images/front-2.png');
@@ -28,6 +31,7 @@ export class Game extends Phaser.Scene {
 
   create() {
     this.createBackground();
+    this.createText();
     this.createCards();
 
     this.startGame();
@@ -56,6 +60,14 @@ export class Game extends Phaser.Scene {
     const h = this.scale.height;
 
     this.add.image(w / 2, h / 2, 'background').setDisplaySize(w, h);
+  }
+
+  createText() {
+    this.add.text(this.scale.width / 2 - 60, 30, "Time: 30", {
+      fontFamily: "CustomFont",
+      fontSize: '30rem',
+      fill: "#000000"
+    })
   }
 
   createCards() {
