@@ -11,6 +11,8 @@ export class Game extends Phaser.Scene {
   private cards = [];
   private openedCard  = null;
   private openedPairCount = 0;
+  private timeoutText: Phaser.GameObjects.Text = '';
+  private timeValue = 10;
 
   constructor() {
     super({key: 'Game'});
@@ -30,6 +32,7 @@ export class Game extends Phaser.Scene {
   }
 
   create() {
+    this.createTimer();
     this.createBackground();
     this.createText();
     this.createCards();
@@ -40,6 +43,7 @@ export class Game extends Phaser.Scene {
   startGame() {
     this.openedCard = null;
     this.openedPairCount = 0;
+    this.timeValue = 10;
     this.initCards();
   }
 
@@ -63,10 +67,19 @@ export class Game extends Phaser.Scene {
   }
 
   createText() {
-    this.add.text(this.scale.width / 2 - 60, 30, "Time: 30", {
+    this.timeoutText = this.add.text(this.scale.width / 2 - 60, 30, ``, {
       fontFamily: "CustomFont",
       fontSize: '30rem',
       fill: "#000000"
+    })
+  }
+
+  createTimer() {
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.onTimerTick,
+      callbackScope: this,
+      loop: true
     })
   }
 
@@ -122,6 +135,16 @@ export class Game extends Phaser.Scene {
     }
 
     return positions;
+  }
+
+  onTimerTick() {
+    this.timeoutText.setText(`Time: ${this.timeValue}`);
+
+    if(this.timeValue <= 0) {
+      this.startGame();
+    } else {
+      --this.timeValue;
+    }
   }
 
 
