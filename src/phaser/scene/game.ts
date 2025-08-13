@@ -95,6 +95,7 @@ export class Game extends Phaser.Scene {
         x: card.moveParams.x,
         y: card.moveParams.y,
         delay: card.moveParams.delay,
+        depth: card.moveParams.delay
       })
     })
   }
@@ -190,6 +191,7 @@ export class Game extends Phaser.Scene {
           x: i * w + offsetX,
           y: j * h + offsetY,
           delay: ++delay * 100,
+          depth: delay
         })
       }
     }

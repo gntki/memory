@@ -4,6 +4,7 @@ export class Card extends Phaser.GameObjects.Sprite {
   cardId: number;
   cardScale: number;
   moveParams!: MoveParams;
+  cardDepth!: number;
   opened: boolean;
 
   constructor(scene: Phaser.Scene, cardScale: number, cardId: number) {
@@ -32,6 +33,7 @@ export class Card extends Phaser.GameObjects.Sprite {
       x: params.x,
       y: params.y,
       delay: params.delay,
+      depth: params.depth,
       ease: "linear",
       duration: 350,
       onComplete: ()=> {
