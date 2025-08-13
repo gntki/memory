@@ -24,7 +24,6 @@ export class Card extends Phaser.GameObjects.Sprite {
     this.moveParams = params;
     this.closeCard();
     this.setPosition(-this.width,-this.height);
-    console.log(this, this.moveParams)
   }
 
   move() {
