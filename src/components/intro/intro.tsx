@@ -5,7 +5,7 @@ import * as Phaser from "phaser";
 
 
 export const Intro = () => {
-  const containerRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const gameRef = useRef<Phaser.Game | null>(null)
 
   useEffect(() => {
