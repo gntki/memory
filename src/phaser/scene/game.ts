@@ -1,5 +1,5 @@
 import Phaser from "phaser"
-import {Card} from "@phaser/views/card.js";
+import {Card} from "@phaser/views/card.ts";
 import type {PositionType} from "@phaser/scene/types.ts";
 
 
@@ -8,15 +8,16 @@ export class Game extends Phaser.Scene {
   private cardScale = .45;
   private cardOffset = 20;
   private cardIds: number[] = [1,2,3,4,5];
-  private cards = [];
-  private openedCard  = null;
+  private cards: Card[] = [];
+  private openedCard: Card | null = null;
   private openedPairCount = 0;
-  private timeoutText: Phaser.GameObjects.Text = '';
+  private timeoutText: Phaser.GameObjects.Text;
   private timeValue = 60;
-  private sounds;
+  private sounds: {[key: string]: Phaser.Sound.BaseSound} = {};
 
   constructor() {
     super({key: 'Game'});
+    this.timeoutText = this.add.text(0, 0, "");
   }
 
   preload() {
@@ -61,7 +62,7 @@ export class Game extends Phaser.Scene {
     const positions = this.getPositions();
     Phaser.Utils.Array.Shuffle(positions);
 
-    this.cards.forEach((card)=> {
+    this.cards.forEach((card:{closeCard:()=> void,setPosition:(x:number, y:number)=> void})=> {
       const position: PositionType = positions.pop()!;
       if(!positions) return;
       card.closeCard();
@@ -92,7 +93,7 @@ export class Game extends Phaser.Scene {
     this.timeoutText = this.add.text(this.scale.width / 2 - 60, 30, ``, {
       fontFamily: "CustomFont",
       fontSize: '30rem',
-      fill: "#000000"
+      color: "#000000"
     })
   }
 
@@ -115,7 +116,7 @@ export class Game extends Phaser.Scene {
     this.input.on('gameobjectdown', this.onCardClick, this);
   }
 
-  onCardClick(pointer, card) {
+  onCardClick(card: Card) {
     if(card.opened) return;
 
     if(this.openedCard) {
