@@ -4,3 +4,5 @@ export interface MoveParams {
   delay?: number,
   callback?: () => void
 }
+
+export type RestartCallback = () => void;

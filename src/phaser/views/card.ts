@@ -1,4 +1,4 @@
-import type {MoveParams} from "@phaser/scene/types.ts";
+import type {MoveParams, RestartCallback} from "@phaser/scene/types.ts";
 
 export class Card extends Phaser.GameObjects.Sprite {
   cardId: number;
@@ -42,9 +42,9 @@ export class Card extends Phaser.GameObjects.Sprite {
     })
   }
 
-  openCard() {
+  openCard(callback: RestartCallback) {
     this.opened = true;
-    this.flip()
+    this.flip(callback)
   }
 
   closeCard() {
@@ -53,17 +53,17 @@ export class Card extends Phaser.GameObjects.Sprite {
     this.flip()
   }
 
-  flip() {
+  flip(callback?: RestartCallback) {
     this.scene.tweens.add({
       targets: this,
       scaleX: 0,
       ease: "linear",
       duration: 150,
-      onComplete: ()=> this.show()
+      onComplete: ()=> this.show(callback)
     })
   }
 
-  show() {
+  show(callback?: RestartCallback) {
     const texture = this.opened ? `card-${this.cardId}` : 'card-back';
     this.setTexture(texture);
     this.scene.tweens.add({
@@ -71,6 +71,9 @@ export class Card extends Phaser.GameObjects.Sprite {
       scaleX: this.cardScale,
       ease: "linear",
       duration: 150,
+      onComplete: ()=> {
+        if(callback) callback();
+      }
     })
   }
 

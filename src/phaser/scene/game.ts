@@ -10,6 +10,7 @@ export class Game extends Phaser.Scene {
   private cards: Card[] = [];
   private openedCard: Card | null = null;
   private openedPairCount = 0;
+  private timer!: Phaser.Time.TimerEvent;
   private timeoutText?: Phaser.GameObjects.Text;
   private timeValue = 60;
   private sounds: {[key: string]: Phaser.Sound.BaseSound} = {};
@@ -53,8 +54,29 @@ export class Game extends Phaser.Scene {
     this.openedCard = null;
     this.openedPairCount = 0;
     this.timeValue = 60;
+    this.timer.paused = false;
     this.initCards();
     this.cardMove();
+  }
+
+
+  restartGame() {
+    let count = 0;
+    const onCardMoveComplete = () => {
+      count ++;
+      if(count >= this.cards.length) {
+        this.startGame();
+      }
+    }
+
+    this.cards.forEach(card => {
+      card.move({
+        x: this.scale.width + card.width,
+        y: this.scale.height + card.height,
+        delay: card.moveParams.delay,
+        callback: onCardMoveComplete,
+      })
+    })
   }
 
   initCards() {
@@ -69,7 +91,11 @@ export class Game extends Phaser.Scene {
 
   cardMove() {
     this.cards.forEach((card)=> {
-      card.move()
+      card.move({
+        x: card.moveParams.x,
+        y: card.moveParams.y,
+        delay: card.moveParams.delay,
+      })
     })
   }
 
@@ -101,7 +127,7 @@ export class Game extends Phaser.Scene {
   }
 
   createTimer() {
-    this.time.addEvent({
+    this.timer = this.time.addEvent({
       delay: 1000,
       callback: this.onTimerTick,
       callbackScope: this,
@@ -136,12 +162,13 @@ export class Game extends Phaser.Scene {
     }
 
     this.sounds.card_open.play();
-    card.openCard();
 
-    if(this.openedPairCount === this.cards.length/2) {
-      this.startGame();
-      this.sounds.complete.play();
-    }
+    card.openCard(()=> {
+      if(this.openedPairCount === this.cards.length/2) {
+        this.restartGame();
+        this.sounds.complete.play();
+      }
+    });
   }
 
   getPositions() {
@@ -176,8 +203,9 @@ export class Game extends Phaser.Scene {
     this.timeoutText.setText(`Time: ${this.timeValue}`);
 
     if(this.timeValue <= 0) {
+      this.timer.paused = true;
       this.sounds.timer_end.play();
-      this.startGame();
+      this.restartGame();
     } else {
       --this.timeValue;
     }
