@@ -119,7 +119,7 @@ export class Game extends Phaser.Scene {
     this.input.on('gameobjectdown', this.onCardClick, this);
   }
 
-  onCardClick(card: Card) {
+  onCardClick(_: Phaser.Input.Pointer, card: Card) {
     if(card.opened) return;
 
     if(this.openedCard) {
