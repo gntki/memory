@@ -1,6 +1,5 @@
 import Phaser from "phaser"
 import {Card} from "@phaser/views/card.ts";
-import type {PositionType} from "@phaser/scene/types.ts";
 
 
 export class Game extends Phaser.Scene {
@@ -11,13 +10,12 @@ export class Game extends Phaser.Scene {
   private cards: Card[] = [];
   private openedCard: Card | null = null;
   private openedPairCount = 0;
-  private timeoutText: Phaser.GameObjects.Text;
+  private timeoutText?: Phaser.GameObjects.Text;
   private timeValue = 60;
   private sounds: {[key: string]: Phaser.Sound.BaseSound} = {};
 
   constructor() {
     super({key: 'Game'});
-    this.timeoutText = this.add.text(0, 0, "");
   }
 
   preload() {
@@ -56,17 +54,22 @@ export class Game extends Phaser.Scene {
     this.openedPairCount = 0;
     this.timeValue = 60;
     this.initCards();
+    this.cardMove();
   }
 
   initCards() {
     const positions = this.getPositions();
     Phaser.Utils.Array.Shuffle(positions);
 
-    this.cards.forEach((card:{closeCard:()=> void,setPosition:(x:number, y:number)=> void})=> {
-      const position: PositionType = positions.pop()!;
-      if(!positions) return;
-      card.closeCard();
-      card.setPosition(position.x,position.y);
+    this.cards.forEach((card)=> {
+      const position = positions.pop()
+      if(position) card.initCard(positions.pop()!)
+    })
+  }
+
+  cardMove() {
+    this.cards.forEach((card)=> {
+      card.move()
     })
   }
 
@@ -152,11 +155,14 @@ export class Game extends Phaser.Scene {
     const offsetX = (this.scale.width - w * rows + w) / 2;
     const offsetY = (this.scale.height - h * cols + h) / 2;
 
+    let delay = 0;
+
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) {
         positions.push({
           x: i * w + offsetX,
-          y: j * h + offsetY
+          y: j * h + offsetY,
+          delay: ++delay * 100,
         })
       }
     }
@@ -165,6 +171,8 @@ export class Game extends Phaser.Scene {
   }
 
   onTimerTick() {
+    if(!this.timeoutText) return;
+
     this.timeoutText.setText(`Time: ${this.timeValue}`);
 
     if(this.timeValue <= 0) {
