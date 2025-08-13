@@ -1,6 +1,9 @@
 export class Card extends Phaser.GameObjects.Sprite {
+  cardId: number;
+  cardScale: number;
+  opened: boolean;
 
-  constructor(scene, cardScale, cardId) {
+  constructor(scene: Phaser.Scene, cardScale: number, cardId: number) {
     super(scene, 0, 0, `card-back`);
     this.scene = scene;
     this.cardId = cardId;
@@ -10,11 +13,9 @@ export class Card extends Phaser.GameObjects.Sprite {
     scene.add.existing(this);
     this.setInteractive();
     this.opened = false;
-
-    console.log('this.cardScale', this.cardScale)
   }
 
-  flip(texture) {
+  flip(texture: string) {
     this.scene.tweens.add({
       targets: this,
       scaleX: 0,
@@ -24,7 +25,7 @@ export class Card extends Phaser.GameObjects.Sprite {
     })
   }
 
-  show(texture) {
+  show(texture: string) {
     this.setTexture(texture);
     this.scene.tweens.add({
       targets: this,
