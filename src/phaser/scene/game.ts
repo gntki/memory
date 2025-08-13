@@ -74,7 +74,8 @@ export class Game extends Phaser.Scene {
         x: this.scale.width + card.width,
         y: this.scale.height + card.height,
         delay: card.moveParams.delay,
-        callback: onCardMoveComplete,
+        depth: card.moveParams.depth,
+        callback: ()=> onCardMoveComplete(),
       })
     })
   }
@@ -211,6 +212,7 @@ export class Game extends Phaser.Scene {
     } else {
       --this.timeValue;
     }
+
   }
 
 
