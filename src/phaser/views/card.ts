@@ -26,40 +26,45 @@ export class Card extends Phaser.GameObjects.Sprite {
     this.setPosition(-this.width,-this.height);
   }
 
-  move() {
+  move(params: MoveParams) {
     this.scene.tweens.add({
       targets: this,
-      x: this.moveParams.x,
-      y: this.moveParams.y,
-      delay: this.moveParams.delay,
+      x: params.x,
+      y: params.y,
+      delay: params.delay,
       ease: "linear",
       duration: 350,
-      onComplete: ()=> {}
+      onComplete: ()=> {
+        if(params.callback) {
+          params.callback();
+        }
+      }
     })
   }
 
   openCard() {
     this.opened = true;
-    this.flip(`card-${this.cardId}`)
+    this.flip()
   }
 
   closeCard() {
     if(!this.opened) return;
     this.opened = false;
-    this.flip(`card-back`)
+    this.flip()
   }
 
-  flip(texture: string) {
+  flip() {
     this.scene.tweens.add({
       targets: this,
       scaleX: 0,
       ease: "linear",
       duration: 150,
-      onComplete: ()=> this.show(texture)
+      onComplete: ()=> this.show()
     })
   }
 
-  show(texture: string) {
+  show() {
+    const texture = this.opened ? `card-${this.cardId}` : 'card-back';
     this.setTexture(texture);
     this.scene.tweens.add({
       targets: this,
