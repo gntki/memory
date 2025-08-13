@@ -63,7 +63,7 @@ export class Game extends Phaser.Scene {
 
     this.cards.forEach((card)=> {
       const position = positions.pop()
-      if(position) card.initCard(positions.pop()!)
+      if(position) card.initCard(position)
     })
   }
 
