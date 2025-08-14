@@ -4,7 +4,6 @@ import {Game} from "@phaser/scene/game.ts";
 import type {GameOptions} from "@phaser/types.ts";
 
 
-
 export function initGame(options: GameOptions) {
   const {parent, width, height} = options;
 
@@ -16,7 +15,10 @@ export function initGame(options: GameOptions) {
       parent,
       width: width,
       height: height,
+      mode: Phaser.Scale.FIT ,
+      autoCenter: Phaser.Scale.CENTER_BOTH,
     },
+    resolution: window.devicePixelRatio || 1,
   }
   const game = new Phaser.Game(config);
 
